@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.scorebackend.mapper.MajorMapper">
+    <select id="selectAll" resultType="com.school.scorebackend.entity.Major">
+        SELECT id,major_name majorName FROM major
+        <where>
+            <if test="majorName != null and majorName != ''">
+                major_name LIKE concat('%',#{majorName},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="insert">
+        INSERT INTO major(major_name) VALUES(#{majorName})
+    </insert>
+    <update id="update">
+        UPDATE major SET major_name=#{majorName} WHERE id=#{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM major WHERE id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.scorebackend.mapper.ScoreMapper">
+
+    <!-- 新增成绩 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO score (student_id,course_id,teacher_id,score,create_time)
+        VALUES (#{studentId},#{courseId},#{teacherId},#{score},#{createTime})
+    </insert>
+
+    <!-- 教师查询自己授课所有成绩（联表查学生名、课程名） -->
+    <select id="selectByTeacherId" resultType="com.school.scorebackend.entity.Score">
+        SELECT
+        s.id,
+        s.student_id studentId,
+        s.course_id courseId,
+        s.teacher_id teacherId,
+        s.score,
+        s.create_time createTime,
+        u.username studentName,
+        c.course_name courseName
+        FROM score s
+        LEFT JOIN `user` u ON s.student_id = u.id
+        LEFT JOIN course c ON s.course_id = c.id
+        WHERE s.teacher_id = #{teacherId}
+    </select>
+
+    <!-- 学生查询自己的成绩（联表查课程、教师名） -->
+    <select id="selectByStudentId" resultType="com.school.scorebackend.entity.Score">
+        SELECT
+        s.id,
+        s.student_id studentId,
+        s.course_id courseId,
+        s.teacher_id teacherId,
+        s.score,
+        s.create_time createTime,
+        u.username studentName,
+        t.username teacherName,
+        c.course_name courseName
+        FROM score s
+        LEFT JOIN `user` u ON s.student_id = u.id
+        LEFT JOIN `user` t ON s.teacher_id = t.id
+        LEFT JOIN course c ON s.course_id = c.id
+        WHERE s.student_id = #{studentId}
+    </select>
+
+    <!-- 新增：查询该教师所有选课学生（无重复，用于录入页面展示） -->
+    <select id="getTeacherSelectStudent" resultType="java.util.Map">
+        SELECT DISTINCT
+        u.id studentId,
+        u.username studentName,
+        c.id courseId,
+        c.course_name courseName
+        FROM score s
+        LEFT JOIN `user` u ON s.student_id = u.id
+        LEFT JOIN course c ON s.course_id = c.id
+        WHERE s.teacher_id = #{teacherId}
+    </select>
+
+    <!-- 新增：根据学生ID+课程ID查询成绩，判断是否重复录入 -->
+    <select id="getByStuAndCourse" resultType="com.school.scorebackend.entity.Score">
+        select * from score where student_id = #{studentId} and course_id = #{courseId}
+    </select>
+
+</mapper>

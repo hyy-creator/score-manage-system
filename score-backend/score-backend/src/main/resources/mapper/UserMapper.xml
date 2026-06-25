@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.scorebackend.mapper.UserMapper">
+
+    <!-- 根据用户名密码查询用户（登录校验） -->
+    <select id="selectByUsernameAndPwd" resultType="User">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+
+    <!-- 查询全部用户 / 模糊搜索用户 -->
+    <select id="selectAll" resultType="User">
+        select * from user
+        <where>
+            <if test="username != null and username != ''">
+                username like concat('%', #{username}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据id查询单个用户 -->
+    <select id="selectById" resultType="User">
+        select * from user where id = #{id}
+    </select>
+
+    <!-- 根据用户名查询（注册查重） -->
+    <select id="selectByUsername" resultType="User">
+        select * from user where username = #{username}
+    </select>
+
+    <!-- 新增用户，自动回填自增主键id -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username, password, role, clazz_id, real_name)
+        values (#{username}, #{password}, #{role}, #{clazzId}, #{realName})
+    </insert>
+
+    <!-- 修改用户，动态更新，不传字段不会清空原有数据 -->
+    <update id="update">
+        update user
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="realName != null">real_name = #{realName},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 根据id删除用户 -->
+    <delete id="deleteById">
+        delete from user where id = #{id}
+    </delete>
+    <!-- 根据用户名模糊搜索 -->
+    <select id="searchByUsername" resultType="User">
+        select * from user where username like concat('%', #{username}, '%')
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.scorebackend.mapper.ClazzMapper">
+    <select id="selectAll" resultType="com.school.scorebackend.entity.Clazz">
+        SELECT id,clazz_name clazzName,major_id majorId FROM clazz
+        <where>
+            <if test="clazzName != null and clazzName != ''">
+                clazz_name LIKE concat('%',#{clazzName},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="insert">
+        INSERT INTO clazz(clazz_name,major_id) VALUES(#{clazzName},#{majorId})
+    </insert>
+    <update id="update">
+        UPDATE clazz SET clazz_name=#{clazzName},major_id=#{majorId} WHERE id=#{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM clazz WHERE id=#{id}
+    </delete>
+</mapper>
